@@ -1,0 +1,29 @@
+{
+  "name": "olho-dagua-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Loading-Desenvolvimento-Jr/olho-dagua-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Loading-Desenvolvimento-Jr/olho-dagua-back/issues"
+  },
+  "homepage": "https://github.com/Loading-Desenvolvimento-Jr/olho-dagua-back#readme",
+  "devDependencies": {
+    "@types/node": "^25.2.2",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
