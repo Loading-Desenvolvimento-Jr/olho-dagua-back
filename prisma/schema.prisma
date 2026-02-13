@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model WaterFountain {
+  id                 Int                @id @default(autoincrement())
+  name               String
+  location           String
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  filter_changes     FilterChange[]
+  water_consumptions WaterConsumption[]
+  water_temperatures WaterTemperature[]
+}
+
+model WaterConsumption {
+  id                Int           @id @default(autoincrement())
+  volume            Float
+  water_fountain_id Int
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  water_fountain    WaterFountain @relation(fields: [water_fountain_id], references: [id])
+}
+
+model WaterTemperature {
+  id                Int           @id @default(autoincrement())
+  temperature       Float
+  water_fountain_id Int
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  water_fountain    WaterFountain @relation(fields: [water_fountain_id], references: [id])
+}
+
+model FilterChange {
+  id                Int           @id @default(autoincrement())
+  water_fountain_id Int
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  water_fountain    WaterFountain @relation(fields: [water_fountain_id], references: [id])
+}
