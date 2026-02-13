@@ -20,7 +20,7 @@ services:
 
   olho_dagua_db:
     container_name: olho_dagua_db
-    image: postgres:18-alpine
+    image: postgres:15
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
