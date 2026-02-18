@@ -1,4 +1,4 @@
-import { prisma } from "../src/lib/prisma"
+import { prisma } from "../src/shared/prisma"
 
 async function main() {
 
@@ -28,7 +28,63 @@ async function main() {
           ]
         }
       }
-    })
+    });
+
+    await prisma.waterFountain.create({
+      data: {
+        name: "Psicologia",
+        location: "Na mestrado da psicologia",
+        water_consumptions: {
+          create: [
+            { volume: 1 },
+            { volume: 10 },
+            { volume: 5 },
+            { volume: 9 },
+          ]
+        },
+        water_temperatures: {
+          create: [
+            { temperature: 22 },
+            { temperature: 21 },
+            { temperature: 20 },
+            { temperature: 25 },
+          ]
+        },
+        filter_changes: {
+          create: [
+            { created_at:new Date("1997") }
+          ]
+        }
+      }
+    });
+
+    await prisma.waterFountain.create({
+      data: {
+        name: "Odontologia",
+        location: "Na odontologia",
+        water_consumptions: {
+          create: [
+            { volume: 1 },
+            { volume: 10 },
+            { volume: 5 },
+            { volume: 9 },
+          ]
+        },
+        water_temperatures: {
+          create: [
+            { temperature: 22 },
+            { temperature: 21 },
+            { temperature: 20 },
+            { temperature: 25 },
+          ]
+        },
+        filter_changes: {
+          create: [
+            { created_at:new Date("1997") }
+          ]
+        }
+      }
+    });
 
 }
 
