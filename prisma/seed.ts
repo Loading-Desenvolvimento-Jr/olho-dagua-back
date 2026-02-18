@@ -4,8 +4,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
-        name: "Mucambinho",
-        location: "Recepção do Mucambinho",
+        name: "Principal",
+        location: "Mucambinho",
         water_consumptions: {
           create: [
             { volume: 1 },
@@ -32,8 +32,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
-        name: "Psicologia",
-        location: "Na mestrado da psicologia",
+        name: "Cantina",
+        location: "Psicologia",
         water_consumptions: {
           create: [
             { volume: 1 },
@@ -60,8 +60,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
-        name: "Odontologia",
-        location: "Na odontologia",
+        name: "Laboratório",
+        location: "Odontologia",
         water_consumptions: {
           create: [
             { volume: 1 },
