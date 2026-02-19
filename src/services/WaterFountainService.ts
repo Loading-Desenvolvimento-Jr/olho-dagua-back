@@ -1,4 +1,4 @@
-import { WaterFountain }           from "@prisma/client";
+import { WaterFountain }           from "../../prisma/generated/client";
 import { WaterFountainRepository } from "../repositories/interfaces/WaterFountainRepository";
 
 export class WaterFountainService {
@@ -9,6 +9,10 @@ export class WaterFountainService {
         
         this.repository = repository;
 
+    }
+
+    public async findById(waterFountainId: string) {
+        return this.repository.findById(waterFountainId);
     }
 
     public async findAll(): Promise<WaterFountain[]> {
