@@ -6,7 +6,7 @@ async function main() {
       data: {
         name: "Principal",
         location: "Mucambinho",
-        water_consumptions: {
+        waterConsumptions: {
           create: [
             { volume: 1 },
             { volume: 10 },
@@ -14,7 +14,7 @@ async function main() {
             { volume: 9 },
           ]
         },
-        water_temperatures: {
+        waterTemperatures: {
           create: [
             { temperature: 22 },
             { temperature: 21 },
@@ -22,9 +22,9 @@ async function main() {
             { temperature: 25 },
           ]
         },
-        filter_changes: {
+        filterChanges: {
           create: [
-            { created_at:new Date("1997") }
+            { createdAt:new Date("1997") }
           ]
         }
       }
@@ -34,7 +34,7 @@ async function main() {
       data: {
         name: "Cantina",
         location: "Psicologia",
-        water_consumptions: {
+        waterConsumptions: {
           create: [
             { volume: 1 },
             { volume: 10 },
@@ -42,7 +42,7 @@ async function main() {
             { volume: 9 },
           ]
         },
-        water_temperatures: {
+        waterTemperatures: {
           create: [
             { temperature: 22 },
             { temperature: 21 },
@@ -50,9 +50,9 @@ async function main() {
             { temperature: 25 },
           ]
         },
-        filter_changes: {
+        filterChanges: {
           create: [
-            { created_at:new Date("1997") }
+            { createdAt:new Date("1997") }
           ]
         }
       }
@@ -62,7 +62,7 @@ async function main() {
       data: {
         name: "Laboratório",
         location: "Odontologia",
-        water_consumptions: {
+        waterConsumptions: {
           create: [
             { volume: 1 },
             { volume: 10 },
@@ -70,7 +70,7 @@ async function main() {
             { volume: 9 },
           ]
         },
-        water_temperatures: {
+        waterTemperatures: {
           create: [
             { temperature: 22 },
             { temperature: 21 },
@@ -78,9 +78,9 @@ async function main() {
             { temperature: 25 },
           ]
         },
-        filter_changes: {
+        filterChanges: {
           create: [
-            { created_at:new Date("1997") }
+            { createdAt: new Date("1997") }
           ]
         }
       }
