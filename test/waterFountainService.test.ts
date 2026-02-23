@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { WaterFountainService }                 from "../src/services/WaterFountainService";
-import { WaterFountainInMemoryRepository }      from "../src/repositories/inMemory/WaterFountainInMemoryRepository";
-import { WaterFountain }                        from "@prisma/client";
+import { describe, it, expect, beforeEach } from "vitest";
+import { WaterFountainService }             from "../src/services/WaterFountainService";
+import { WaterFountainInMemoryRepository }  from "../src/repositories/inMemory/WaterFountainInMemoryRepository";
+import { WaterFountain }                    from "../prisma/generated/client";
 
 describe("WaterFountainService", () => {
 
@@ -10,11 +10,11 @@ describe("WaterFountainService", () => {
 
     const mockData: WaterFountain[] = [
         {
-            id: 1,
-            name: "Mucambinho",
+            id:       "1",
+            name:     "Mucambinho",
             location: "Mucambo",
-            created_at: new Date(),
-            updated_at: new Date()
+            createdAt: new Date(),
+            updatedAt: new Date()
         }
     ];
 

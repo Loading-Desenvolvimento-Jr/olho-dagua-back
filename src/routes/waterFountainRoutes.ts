@@ -20,8 +20,9 @@ export async function waterFountainRoutes(app: FastifyInstance) {
                             type: 'object',
                             properties: {
                                 id: {
-                                    type:   'integer',
-                                    example: 1
+                                    type:    'string',
+                                    format:  'uuid',
+                                    example: '1954a69b-7683-4f1a-9963-b2fdc2df66e6',
                                 },
                                 name: {
                                     type:    'string',
