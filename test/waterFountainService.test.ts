@@ -13,6 +13,8 @@ describe("WaterFountainService", () => {
             id:       "1",
             name:     "Mucambinho",
             location: "Mucambo",
+            filterStatus: 'GOOD',
+            temperature: 70.0,
             createdAt: new Date(),
             updatedAt: new Date()
         }
