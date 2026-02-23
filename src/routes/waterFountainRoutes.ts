@@ -32,6 +32,20 @@ export async function waterFountainRoutes(app: FastifyInstance) {
                                     type:    'string',
                                     example: "Bloco A - Térreo"
                                 },
+                                temperature: {
+                                    type:    'number',
+                                    example: 25.0
+                                },
+                                filterStatus: {
+                                    type: "string",
+                                    enum: [
+                                        "EXCELLENT",
+                                        "ATTENTION",
+                                        "GOOD",
+                                        "TO_REPLACE",
+                                    ],
+                                    example: "GOOD"
+                                },
                                 created_at: {
                                     type:    'string',
                                     format:  'date-time',
