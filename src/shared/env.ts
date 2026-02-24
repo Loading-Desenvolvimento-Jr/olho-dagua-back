@@ -5,10 +5,12 @@ config();
 
 const envSchema = z.object({
 
-    NODE_ENV:     z.string(),
+    NODE_ENV: z.string(),
 
-    APP_PORT:     z.coerce.number(),
-    APP_HOST:     z.string(),
+    APP_PORT: z.coerce.number(),
+    APP_HOST: z.string(),
+
+    CORS_ORIGIN: z.string(),
     
     DATABASE_URL: z.string(),
 
