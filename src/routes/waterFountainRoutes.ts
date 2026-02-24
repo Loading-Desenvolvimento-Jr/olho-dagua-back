@@ -46,12 +46,12 @@ export async function waterFountainRoutes(app: FastifyInstance) {
                                     ],
                                     example: "GOOD"
                                 },
-                                created_at: {
+                                createdAt: {
                                     type:    'string',
                                     format:  'date-time',
                                     example: "2026-02-18T14:00:00.000Z"
                                 },
-                                updated_at: {
+                                updatedAt: {
                                     type:    'string',
                                     format:  'date-time',
                                     example: "2026-02-18T14:00:00.000Z"
