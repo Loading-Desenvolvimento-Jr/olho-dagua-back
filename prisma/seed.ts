@@ -4,6 +4,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
+        temperature: 10,
+        filterStatus: 'GOOD',
         name: "Principal",
         location: "Mucambinho",
         waterConsumptions: {
@@ -32,6 +34,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
+        temperature: 10,
+        filterStatus: 'GOOD',
         name: "Cantina",
         location: "Psicologia",
         waterConsumptions: {
@@ -60,6 +64,8 @@ async function main() {
 
     await prisma.waterFountain.create({
       data: {
+        temperature: 10,
+        filterStatus: 'GOOD',
         name: "Laboratório",
         location: "Odontologia",
         waterConsumptions: {

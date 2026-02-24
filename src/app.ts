@@ -31,11 +31,7 @@ app.register(fastifySwagger, {
       {
         name:        'water-fountain',
         description: 'Rotas de sobre os bebedouros',
-      },
-      {
-        name:        'temperature',
-        description: 'Rotas de sobre a temperatura da água',
-      },
+      }
     ],
   }
 });

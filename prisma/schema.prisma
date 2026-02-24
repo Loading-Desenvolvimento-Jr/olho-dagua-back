@@ -7,10 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+enum FilterStatus {
+  EXCELLENT
+  ATTENTION
+  GOOD
+  TO_REPLACE
+}
+
 model WaterFountain {
   id                String             @id @default(uuid())
   name              String
   location          String
+  temperature       Float
+  filterStatus      FilterStatus       @default(GOOD)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   filterChanges     FilterChange[]
