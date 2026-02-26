@@ -14,11 +14,12 @@ services:
       - DB_HOST=olho_dagua_db
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
     depends_on:
-      - olho_dagua_db
+      - db
+      - mosquitto
     volumes:
       - .:/app
 
-  olho_dagua_db:
+  db:
     container_name: olho_dagua_db
     image: postgres:15
     environment:
@@ -29,6 +30,18 @@ services:
       - '5432:5432'
     volumes:
       - olho_dagua_db_data:/var/lib/postgresql
+
+  mosquitto:
+    container_name: olho_dagua_mqtt
+    image: eclipse-mosquitto:2
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
 
 volumes:
   olho_dagua_db_data:
