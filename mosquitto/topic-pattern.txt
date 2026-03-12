@@ -1,0 +1,5 @@
+olho-dagua/
+   bebedouros/
+      {id}/
+         metrics
+         status

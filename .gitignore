@@ -1,4 +1,9 @@
-node_modules
-dist
 .env
+
+dist
+node_modules
 prisma/generated
+
+mosquitto/data/
+mosquitto/log/
+mosquitto/config/password.txt

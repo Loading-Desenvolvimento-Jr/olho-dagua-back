@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { z }      from 'zod';
 
-config();
+config({ override: true });
 
 const envSchema = z.object({
 
@@ -13,6 +13,10 @@ const envSchema = z.object({
     CORS_ORIGIN: z.string(),
     
     DATABASE_URL: z.string(),
+
+    MQTT_BROKER_URL: z.string(),
+    MQTT_USER:       z.string(),
+    MQTT_PASSWORD:   z.string(),
 
 });
 
