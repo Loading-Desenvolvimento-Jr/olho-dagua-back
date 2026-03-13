@@ -9,9 +9,13 @@ import { routes } from "./routes";
 import fs         from 'fs';
 import path       from 'path';
 
+import { ErrorHandlerMiddleware } from './middlewares/errorHandler';
+
 const app = Fastify({
   logger: true
 });
+
+app.setErrorHandler(ErrorHandlerMiddleware);
 
 const favicon = fs.readFileSync(
   path.join(__dirname, '../assets/olho-dagua.svg')
