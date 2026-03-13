@@ -15,6 +15,31 @@ export class TemperatureService {
 
     }
 
+    public async create(temperature: number, waterFountainId: string): Promise<WaterTemperature> {
+
+        const waterFountainFound = await this.waterFountainService.findById(
+            waterFountainId
+        );
+
+        if (!waterFountainFound) {
+            throw new ResourceNotFound(
+                `Water fountain with id ${waterFountainId} not found`
+            );
+        }
+
+        waterFountainFound.temperature = temperature;
+
+        this.waterFountainService.update(waterFountainFound);
+
+        const temperatureRow = await this.repository.create(
+            temperature, 
+            waterFountainId
+        );
+
+        return temperatureRow;
+
+    }
+
     public async findLast(waterFountainId: string): Promise<WaterTemperature> {
 
         const waterFountainFound = await this.waterFountainService.findById(
