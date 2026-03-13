@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { WaterFountainService }             from "../src/services/WaterFountainService";
-import { WaterFountainInMemoryRepository }  from "../src/repositories/inMemory/WaterFountainInMemoryRepository";
-import { WaterFountain }                    from "../prisma/generated/client";
+import { WaterFountainService }             from "../../src/services/WaterFountainService";
+import { WaterFountainInMemoryRepository }  from "../../src/repositories/inMemory/WaterFountainInMemoryRepository";
+import { WaterFountain }                    from "../../prisma/generated/client";
 
 describe("WaterFountainService", () => {
 
@@ -27,7 +27,9 @@ describe("WaterFountainService", () => {
 
     it("should run smoothly", async () => {
 
-        expect(service.findAll()).resolves
+        await expect(
+            service.findAll()
+        ).resolves.not.toThrow();
 
     });
 
