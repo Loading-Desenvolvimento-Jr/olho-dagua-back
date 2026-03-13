@@ -1,12 +1,16 @@
 import { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { AppError } from "../shared/exception/AppError";
+import { ZodError } from "zod";
 
 export interface ErrorResponse {
     statusCode: number;
-    error: string;      // short label like "Not Found", "Validation Error"
-    message: string;    // human-readable detail
+    error: string;
+    message: string;
 }
 
+function buildErrorResponse(statusCode: number, error: string, message: string): ErrorResponse {
+    return { statusCode, error, message };
+}
 
 export function ErrorHandlerMiddleware(
     error: FastifyError,
@@ -15,15 +19,28 @@ export function ErrorHandlerMiddleware(
 ) {
     const app = reply.server as FastifyInstance;
 
-    if(error instanceof AppError) {
-        return reply.status(error.statusCode).send({
-            statusCode: error.statusCode,
-            error: error.name,
-            message: error.message,
-        } as ErrorResponse);
+    if (error instanceof AppError) {
+        app.log.warn({ err: error }, `${error.name}: ${error.message}`);
+
+        return reply    
+            .status(error.statusCode)
+            .send(buildErrorResponse(error.statusCode, error.name, error.message));
     }
-    
-    // Logs all details of an unexpected error and the request that caused it
+
+    // Request validation errors (thrown by Zod)
+    if (error instanceof ZodError) {
+        const details = error.issues
+            .map(v => v.message)
+            .join("; ");
+
+        app.log.warn({ err: error }, `Zod Validation Error: ${details}`);
+
+        return reply
+            .status(400)
+            .send(buildErrorResponse(400, "Bad Request", details));
+    }
+
+    // For unexpected / unknown errors
     app.log.error({
         request: {
             method: request.method,
@@ -34,12 +51,9 @@ export function ErrorHandlerMiddleware(
             parameters: request.params,
         },
         error: error,
-        },
-    'An unhandled error occurred');
+    }, "An unhandled error occurred");
 
-    reply.status(500).send({
-            statusCode: 500,
-            error: "Internal Server Error",
-            message: "An unexpected error occurred.",
-        } as ErrorResponse);
+    reply
+        .status(500)
+        .send(buildErrorResponse(500, "Internal Server Error", "An unexpected error occurred."));
 }

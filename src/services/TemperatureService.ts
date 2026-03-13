@@ -1,6 +1,6 @@
 import { WaterTemperature }      from "../../prisma/generated/client";
 import { TemperatureRepository } from "../repositories/interfaces/TemperatureRepository";
-import { ResourceNotFound }      from "../shared/exception/ResourceNotFound";
+import { ResourceNotFound }      from "../shared/exception/wrappers/ResourceNotFound";
 import { WaterFountainService }  from "./WaterFountainService";
 
 export class TemperatureService {
