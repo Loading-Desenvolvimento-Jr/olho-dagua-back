@@ -1,6 +1,6 @@
 import { WaterFountain }           from "../../prisma/generated/client";
 import { WaterFountainRepository } from "../repositories/interfaces/WaterFountainRepository";
-import { ResourceNotFound } from "../shared/exception/ResourceNotFound";
+import { ResourceNotFound }        from "../shared/exception/wrappers/ResourceNotFound";
 
 export class WaterFountainService {
 
