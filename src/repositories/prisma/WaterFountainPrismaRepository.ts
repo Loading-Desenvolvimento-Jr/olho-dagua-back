@@ -4,6 +4,17 @@ import { prisma }                  from "../../shared/prisma";
 
 export class WaterFountainPrismaRepository implements WaterFountainRepository {
 
+    public async update(waterFountain: WaterFountain): Promise<WaterFountain> {
+
+        const { id, ...data } = waterFountain;
+
+        return await prisma.waterFountain.update({
+            data,
+            where: { id }
+        });
+        
+    }
+
     public async findAll(): Promise<WaterFountain[]> {
         return await prisma.waterFountain.findMany();        
     }

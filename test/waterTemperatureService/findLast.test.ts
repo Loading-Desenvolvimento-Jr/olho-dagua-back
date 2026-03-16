@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { TemperatureService }               from "../src/services/TemperatureService"
-import { TemperatureInMemoryRepository }    from "../src/repositories/inMemory/TemperatureInMemoryRepository";
-import { WaterFountainService }             from "../src/services/WaterFountainService";
-import { WaterFountainInMemoryRepository }  from "../src/repositories/inMemory/WaterFountainInMemoryRepository";
-import { WaterFountain, WaterTemperature }  from "../prisma/generated/client";
-import { ResourceNotFound }                 from "../src/shared/exception/wrappers/ResourceNotFound";
+import { TemperatureService }               from "../../src/services/TemperatureService"
+import { TemperatureInMemoryRepository }    from "../../src/repositories/inMemory/TemperatureInMemoryRepository";
+import { WaterFountainService }             from "../../src/services/WaterFountainService";
+import { WaterFountainInMemoryRepository }  from "../../src/repositories/inMemory/WaterFountainInMemoryRepository";
+import { WaterFountain, WaterTemperature }  from "../../prisma/generated/client";
+import { ResourceNotFound }                 from "../../src/shared/exception/wrappers/ResourceNotFound";
 
 describe("WaterTemperatureService", () => {
 

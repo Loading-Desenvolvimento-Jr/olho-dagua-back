@@ -1,6 +1,10 @@
-import mqtt    from "mqtt";
-import z       from "zod";
-import { env } from "../shared/env";
+import mqtt                              from "mqtt";
+import z                                 from "zod";
+import { env }                           from "../shared/env";
+import { TemperatureService }            from "../services/TemperatureService";
+import { TemperaturePrismaRepository }   from "../repositories/prisma/TemperaturePrismaRepository";
+import { WaterFountainPrismaRepository } from "../repositories/prisma/WaterFountainPrismaRepository";
+import { WaterFountainService }          from "../services/WaterFountainService";
 
 const dataPayloadSchema = z.object({
   value:     z.number(),
@@ -15,6 +19,13 @@ const statusPayloadSchema = z.object({
 });
 
 type statusPayloadType = z.infer<typeof statusPayloadSchema>;
+
+const temperatureService = new TemperatureService(
+  new TemperaturePrismaRepository(),
+  new WaterFountainService(
+    new WaterFountainPrismaRepository()
+  )
+);
 
 const client = mqtt.connect(env.MQTT_BROKER_URL, {
   username: env.MQTT_USER,
@@ -40,7 +51,7 @@ client.on("message", async (topic, messageBuffer) => {
 
   if (topicParts.length < 4) return;
 
-  const [, , fountainId, category, metric] = topicParts;
+  const [, , waterFountainId, category, metric] = topicParts;
 
   try {
 
@@ -51,11 +62,11 @@ client.on("message", async (topic, messageBuffer) => {
       const payload = dataPayloadSchema.parse(jsonPayload);
 
       if (metric === "temperature") {
-        await handleTemperature(fountainId, payload);
+        await handleTemperature(waterFountainId, payload);
       }
 
       if (metric === "consumption") {
-        await handleConsumption(fountainId, payload);
+        await handleConsumption(waterFountainId, payload);
       }
 
     }
@@ -64,7 +75,7 @@ client.on("message", async (topic, messageBuffer) => {
 
       const payload = statusPayloadSchema.parse(jsonPayload);
 
-      await handleStatus(fountainId, payload);
+      await handleStatus(waterFountainId, payload);
 
     }
 
@@ -74,23 +85,33 @@ client.on("message", async (topic, messageBuffer) => {
 
 });
 
-async function handleTemperature(fountainId: string, payload: dataPayloadType) {
+async function handleTemperature(waterFountainId: string, payload: dataPayloadType) {
 
-  console.log(`Temperature payload recive ${fountainId}`);
+  console.log(`Temperature payload recive ${waterFountainId}`);
+  console.log(payload);
+
+  const { value: temperature } = payload;
+
+  try {
+    
+    await temperatureService.create(temperature, waterFountainId);
+
+  } catch (error) {
+    console.error(error);
+  }
+
+}
+
+async function handleConsumption(waterFountainId: string, payload: dataPayloadType) {
+
+  console.log(`Water consume payload recive ${waterFountainId}`);
   console.log(payload);
 
 }
 
-async function handleConsumption(fountainId: string, payload: dataPayloadType) {
+async function handleStatus(waterFountainId: string, payload: statusPayloadType) {
 
-  console.log(`Water consume payload recive ${fountainId}`);
-  console.log(payload);
-
-}
-
-async function handleStatus(fountainId: string, payload: statusPayloadType) {
-
-  console.log(`Status do bebedouro ${fountainId}`);
+  console.log(`Status do bebedouro ${waterFountainId}`);
   console.log(payload);
 
 }

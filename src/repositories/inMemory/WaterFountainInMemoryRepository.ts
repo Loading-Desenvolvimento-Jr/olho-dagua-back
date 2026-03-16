@@ -9,6 +9,21 @@ export class WaterFountainInMemoryRepository implements WaterFountainRepository 
         this.waterFoutains = [];
     }
     
+    public async update(waterFountain: WaterFountain): Promise<WaterFountain> {
+
+        const index = this.waterFoutains.findIndex(
+            (wf) => wf.id === waterFountain.id
+        );
+
+        if (index === -1) {
+            throw new Error("Water fountain not found");
+        }
+
+        this.waterFoutains[index] = waterFountain;
+
+        return this.waterFoutains[index];
+    }
+
     public async findById(waterFountainId: string): Promise<WaterFountain | null> {
         
         const waterFountain = this.waterFoutains.find(
