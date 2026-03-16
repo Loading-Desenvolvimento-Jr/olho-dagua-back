@@ -4,7 +4,7 @@ import { TemperatureInMemoryRepository }    from "../src/repositories/inMemory/T
 import { WaterFountainService }             from "../src/services/WaterFountainService";
 import { WaterFountainInMemoryRepository }  from "../src/repositories/inMemory/WaterFountainInMemoryRepository";
 import { WaterFountain, WaterTemperature }  from "../prisma/generated/client";
-import { ResourceNotFound }                 from "../src/shared/exception/ResourceNotFound";
+import { ResourceNotFound }                 from "../src/shared/exception/wrappers/ResourceNotFound";
 
 describe("WaterTemperatureService", () => {
 
