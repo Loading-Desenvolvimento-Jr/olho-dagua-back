@@ -5,6 +5,10 @@ import { TemperatureService }            from "../services/TemperatureService";
 import { TemperaturePrismaRepository }   from "../repositories/prisma/TemperaturePrismaRepository";
 import { WaterFountainPrismaRepository } from "../repositories/prisma/WaterFountainPrismaRepository";
 import { WaterFountainService }          from "../services/WaterFountainService";
+import { ConsumptionService } from "../services/ConsumptionService";
+import { ConsumptionPrismaRepository } from "../repositories/prisma/ConsumptionPrismaRepository";
+import { FilterChangeService } from "../services/FilterChangeService";
+import { FilterChangePrismaRepository } from "../repositories/prisma/FilterChangePrismaRepository";
 
 const dataPayloadSchema = z.object({
   value:     z.number(),
@@ -20,11 +24,24 @@ const statusPayloadSchema = z.object({
 
 type statusPayloadType = z.infer<typeof statusPayloadSchema>;
 
+const waterFountainService = new WaterFountainService(
+  new WaterFountainPrismaRepository()
+);
+
 const temperatureService = new TemperatureService(
   new TemperaturePrismaRepository(),
-  new WaterFountainService(
-    new WaterFountainPrismaRepository()
-  )
+  waterFountainService
+);
+
+const filterChangeService = new FilterChangeService(
+  new FilterChangePrismaRepository(),
+  waterFountainService
+);
+
+const consumptionService = new ConsumptionService(
+  new ConsumptionPrismaRepository(),
+  waterFountainService,
+  filterChangeService
 );
 
 const client = mqtt.connect(env.MQTT_BROKER_URL, {
@@ -106,6 +123,16 @@ async function handleConsumption(waterFountainId: string, payload: dataPayloadTy
 
   console.log(`Water consume payload recive ${waterFountainId}`);
   console.log(payload);
+
+  const { value: volume } = payload;
+
+  try {
+    
+    await consumptionService.create(volume, waterFountainId);
+
+  } catch (error) {
+    console.error(error);
+  }
 
 }
 
