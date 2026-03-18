@@ -40,17 +40,10 @@ export class ConsumptionService {
             waterFountainId
         );
 
-        if (!waterFountainFound) {
-            throw new ResourceNotFound(
-                `Water fountain with id ${waterFountainId} not found`
-            );
-        }
-
         const consumptionRow = await this.repository.create(
             volume, 
             waterFountainId
         );
-
 
         const lastFilterChange = await this.filterChangeService.findLast(
             waterFountainId

@@ -21,17 +21,11 @@ export class FilterChangeService {
             waterFountainId
         );
 
-        if (!waterFountainFound) {
-            throw new ResourceNotFound(
-                `Water fountain with id ${waterFountainId} not found`
-            );
-        }
-
         const filterChange = await this.repository.findLast(waterFountainId);
 
         if (!filterChange) {
             throw new ResourceNotFound(
-                `Has not filter change for water fountain with id ${waterFountainId} not found`
+                `No filter changes found for water fountain with id ${waterFountainId}`
             );
         }
 
