@@ -13,7 +13,15 @@ export class WaterFountainService {
     }
 
     public async findById(waterFountainId: string) {
-        return await this.repository.findById(waterFountainId);
+        const waterFountainFound = await this.repository.findById(waterFountainId);
+
+        if (!waterFountainFound) {
+            throw new ResourceNotFound(
+                `Water fountain with id ${waterFountainId} not found`
+            );
+        }
+
+        return waterFountainFound;
     }
 
     public async findAll(): Promise<WaterFountain[]> {
@@ -25,12 +33,6 @@ export class WaterFountainService {
         const waterFountainFound = await this.findById(
             waterFountain.id
         );
-
-        if (!waterFountainFound) {
-            throw new ResourceNotFound(
-                `Water fountain with id ${waterFountain.id} not found`
-            );
-        }
 
         return await this.repository.update(waterFountain);
     }

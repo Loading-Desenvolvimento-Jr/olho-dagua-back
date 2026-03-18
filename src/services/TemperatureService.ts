@@ -21,12 +21,6 @@ export class TemperatureService {
             waterFountainId
         );
 
-        if (!waterFountainFound) {
-            throw new ResourceNotFound(
-                `Water fountain with id ${waterFountainId} not found`
-            );
-        }
-
         waterFountainFound.temperature = temperature;
 
         this.waterFountainService.update(waterFountainFound);
@@ -46,17 +40,11 @@ export class TemperatureService {
             waterFountainId
         );
 
-        if (!waterFountainFound) {
-            throw new ResourceNotFound(
-                `Water fountain with id ${waterFountainId} not found`
-            );
-        }
-
         const temperature = await this.repository.findLast(waterFountainId);
 
         if (!temperature) {
             throw new ResourceNotFound(
-                `Has not temperature for water fountain with id ${waterFountainId} not found`
+                `No temperature readings found for water fountain with id ${waterFountainId}`
             );
         }
 

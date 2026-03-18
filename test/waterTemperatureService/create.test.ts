@@ -6,7 +6,7 @@ import { WaterFountainInMemoryRepository }  from "../../src/repositories/inMemor
 import { WaterFountain, WaterTemperature }  from "../../prisma/generated/client";
 import { ResourceNotFound }                 from "../../src/shared/exception/wrappers/ResourceNotFound";
 
-describe("WaterTemperatureService", () => {
+describe("WaterTemperatureService.create", () => {
 
     let temperatureInMemoryRepository:   TemperatureInMemoryRepository;
     let waterFountainInMemoryRepository: WaterFountainInMemoryRepository; 
