@@ -3,7 +3,7 @@ import { WaterFountainService }             from "../../src/services/WaterFounta
 import { WaterFountainInMemoryRepository }  from "../../src/repositories/inMemory/WaterFountainInMemoryRepository";
 import { WaterFountain }                    from "../../prisma/generated/client";
 
-describe("WaterFountainService", () => {
+describe("WaterFountainService.findAll", () => {
 
     let repositoryMock: WaterFountainInMemoryRepository;
     let service:        WaterFountainService;

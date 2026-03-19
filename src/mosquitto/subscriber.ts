@@ -1,11 +1,8 @@
 import mqtt                              from "mqtt";
 import { env }                           from "../shared/env";
-
 import { dataPayloadSchema, statusPayloadSchema } from "./mqtt-types";
 import z from "zod";
 import { handleConsumption, handleStatus, handleTemperature } from "./handlers";
-
-
 
 const MQTT_PREFIX = env.MQTT_TOPIC_PREFIX;
 const MQTT_SUBSCRIBER_TOPICS = {
