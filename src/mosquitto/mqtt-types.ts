@@ -13,4 +13,3 @@ export const statusPayloadSchema = z.object({
 });
 
 export type statusPayloadType = z.infer<typeof statusPayloadSchema>;
-

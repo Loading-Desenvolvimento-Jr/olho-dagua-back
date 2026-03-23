@@ -1,10 +1,8 @@
-import mqtt                              from "mqtt";
-import { env }                           from "../shared/env";
-
-import { dataPayloadSchema, statusPayloadSchema } from "./mqtt-types";
 import z from "zod";
+import mqtt from "mqtt";
+import { env } from "../shared/env";
+import { dataPayloadSchema, statusPayloadSchema } from "./mqtt-types";
 import { handleConsumption, handleStatus, handleTemperature } from "./handlers";
-
 
 
 const MQTT_PREFIX = env.MQTT_TOPIC_PREFIX;

@@ -3,17 +3,34 @@ import { TemperatureService }            from "../services/TemperatureService";
 import { TemperaturePrismaRepository }   from "../repositories/prisma/TemperaturePrismaRepository";
 import { WaterFountainPrismaRepository } from "../repositories/prisma/WaterFountainPrismaRepository";
 import { WaterFountainService }          from "../services/WaterFountainService";
+import { FilterChangeService } from "../services/FilterChangeService";
+import { FilterChangePrismaRepository } from "../repositories/prisma/FilterChangePrismaRepository";
+import { ConsumptionService } from "../services/ConsumptionService";
+import { ConsumptionPrismaRepository } from "../repositories/prisma/ConsumptionPrismaRepository";
+
+const waterFountainService = new WaterFountainService(
+  new WaterFountainPrismaRepository()
+);
 
 const temperatureService = new TemperatureService(
   new TemperaturePrismaRepository(),
-  new WaterFountainService(
-    new WaterFountainPrismaRepository()
-  )
+  waterFountainService
+);
+
+const filterChangeService = new FilterChangeService(
+  new FilterChangePrismaRepository(),
+  waterFountainService
+);
+
+const consumptionService = new ConsumptionService(
+  new ConsumptionPrismaRepository(),
+  waterFountainService,
+  filterChangeService
 );
 
 export async function handleTemperature(waterFountainId: string, payload: dataPayloadType) {
 
-  console.log(`Temperature payload receive ${waterFountainId}`);
+  console.log(`Temperature payload recive ${waterFountainId}`);
   console.log(payload);
 
   const { value: temperature } = payload;
@@ -30,8 +47,18 @@ export async function handleTemperature(waterFountainId: string, payload: dataPa
 
 export async function handleConsumption(waterFountainId: string, payload: dataPayloadType) {
 
-  console.log(`Water consume payload receive ${waterFountainId}`);
+  console.log(`Water consume payload recive ${waterFountainId}`);
   console.log(payload);
+
+  const { value: volume } = payload;
+
+  try {
+    
+    await consumptionService.create(volume, waterFountainId);
+
+  } catch (error) {
+    console.error(error);
+  }
 
 }
 
