@@ -1,48 +1,14 @@
-import mqtt                              from "mqtt";
-import z                                 from "zod";
-import { env }                           from "../shared/env";
-import { TemperatureService }            from "../services/TemperatureService";
-import { TemperaturePrismaRepository }   from "../repositories/prisma/TemperaturePrismaRepository";
-import { WaterFountainPrismaRepository } from "../repositories/prisma/WaterFountainPrismaRepository";
-import { WaterFountainService }          from "../services/WaterFountainService";
-import { ConsumptionService } from "../services/ConsumptionService";
-import { ConsumptionPrismaRepository } from "../repositories/prisma/ConsumptionPrismaRepository";
-import { FilterChangeService } from "../services/FilterChangeService";
-import { FilterChangePrismaRepository } from "../repositories/prisma/FilterChangePrismaRepository";
+import z from "zod";
+import mqtt from "mqtt";
+import { env } from "../shared/env";
+import { dataPayloadSchema, statusPayloadSchema } from "./mqtt-types";
+import { handleConsumption, handleStatus, handleTemperature } from "./handlers";
 
-const dataPayloadSchema = z.object({
-  value:     z.number(),
-  timestamp: z.date()
-});
-
-type dataPayloadType = z.infer<typeof dataPayloadSchema>;
-
-const statusPayloadSchema = z.object({
-  status:    z.enum(["on", "off"]),
-  timestamp: z.date()
-});
-
-type statusPayloadType = z.infer<typeof statusPayloadSchema>;
-
-const waterFountainService = new WaterFountainService(
-  new WaterFountainPrismaRepository()
-);
-
-const temperatureService = new TemperatureService(
-  new TemperaturePrismaRepository(),
-  waterFountainService
-);
-
-const filterChangeService = new FilterChangeService(
-  new FilterChangePrismaRepository(),
-  waterFountainService
-);
-
-const consumptionService = new ConsumptionService(
-  new ConsumptionPrismaRepository(),
-  waterFountainService,
-  filterChangeService
-);
+const MQTT_PREFIX = env.MQTT_TOPIC_PREFIX;
+const MQTT_SUBSCRIBER_TOPICS = {
+  METRICS: `${MQTT_PREFIX}${env.MQTT_SUBSCRIBER_METRICS}`,
+  STATUS:  `${MQTT_PREFIX}${env.MQTT_SUBSCRIBER_STATUS}`,
+};
 
 const client = mqtt.connect(env.MQTT_BROKER_URL, {
   username: env.MQTT_USER,
@@ -53,8 +19,8 @@ client.on("connect", () => {
 
   console.log("Stable MQTT connection");
 
-  client.subscribe("olho-dagua/water-fountain/+/metrics/+");
-  client.subscribe("olho-dagua/water-fountain/+/status");
+  client.subscribe(MQTT_SUBSCRIBER_TOPICS.METRICS);
+  client.subscribe(MQTT_SUBSCRIBER_TOPICS.STATUS);
 
 });
 
@@ -64,11 +30,15 @@ client.on("message", async (topic, messageBuffer) => {
 
   console.log(`${topic}: ${message}`);
 
-  const topicParts = topic.split("/");
+  if (!topic.startsWith(MQTT_PREFIX)) {
+    console.warn(`Ignored message from unexpected topic: ${topic}`);
+    return;
+  }
 
-  if (topicParts.length < 4) return;
+  const subTopic = topic.replace(`${MQTT_PREFIX}/`, "");
+  const topicParts = subTopic.split("/");
 
-  const [, , waterFountainId, category, metric] = topicParts;
+  const [waterFountainId, category, metric] = topicParts;
 
   try {
 
@@ -78,17 +48,18 @@ client.on("message", async (topic, messageBuffer) => {
 
       const payload = dataPayloadSchema.parse(jsonPayload);
 
-      if (metric === "temperature") {
-        await handleTemperature(waterFountainId, payload);
+      switch (metric) {
+        case "temperature":
+          await handleTemperature(waterFountainId, payload);
+          break;
+        case "consumption":
+          await handleConsumption(waterFountainId, payload);
+          break;
+        default:
+          throw new Error(`Unexpected metric data: ${metric} with payload ${message}`);
       }
 
-      if (metric === "consumption") {
-        await handleConsumption(waterFountainId, payload);
-      }
-
-    }
-
-    if (category === "status") {
+    } else if (category === "status") {
 
       const payload = statusPayloadSchema.parse(jsonPayload);
 
@@ -97,48 +68,17 @@ client.on("message", async (topic, messageBuffer) => {
     }
 
   } catch (error) {
-    console.error("Error processing MQTT message.", error);
+    if (error instanceof SyntaxError) {
+      console.error(`Invalid JSON payload for topic ${topic}`);
+      return;
+    }
+
+    if (error instanceof z.ZodError) {
+      console.error(`Invalid payload for topic ${topic}: ${z.flattenError(error)}`);
+      return;
+    }
+
+    console.error("Error processing MQTT message:", error);
   }
 
 });
-
-async function handleTemperature(waterFountainId: string, payload: dataPayloadType) {
-
-  console.log(`Temperature payload recive ${waterFountainId}`);
-  console.log(payload);
-
-  const { value: temperature } = payload;
-
-  try {
-    
-    await temperatureService.create(temperature, waterFountainId);
-
-  } catch (error) {
-    console.error(error);
-  }
-
-}
-
-async function handleConsumption(waterFountainId: string, payload: dataPayloadType) {
-
-  console.log(`Water consume payload recive ${waterFountainId}`);
-  console.log(payload);
-
-  const { value: volume } = payload;
-
-  try {
-    
-    await consumptionService.create(volume, waterFountainId);
-
-  } catch (error) {
-    console.error(error);
-  }
-
-}
-
-async function handleStatus(waterFountainId: string, payload: statusPayloadType) {
-
-  console.log(`Status do bebedouro ${waterFountainId}`);
-  console.log(payload);
-
-}

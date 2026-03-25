@@ -17,6 +17,9 @@ const envSchema = z.object({
     MQTT_BROKER_URL: z.string(),
     MQTT_USER:       z.string(),
     MQTT_PASSWORD:   z.string(),
+    MQTT_TOPIC_PREFIX: z.string(),
+    MQTT_SUBSCRIBER_METRICS: z.string(),
+    MQTT_SUBSCRIBER_STATUS: z.string(),
 
 });
 
