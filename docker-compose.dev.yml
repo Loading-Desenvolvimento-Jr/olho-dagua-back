@@ -1,0 +1,65 @@
+services:
+  api:
+    container_name: olho_dagua_api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=olho_dagua_db
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - db
+      - mosquitto
+    volumes:
+      - .:/app
+
+  db:
+    container_name: olho_dagua_db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - olho_dagua_db_data:/var/lib/postgresql
+
+  mosquitto:
+    container_name: olho_dagua_broker
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  mqtt-worker:
+    container_name: olho_dagua_worker
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npx tsx watch src/mosquitto/subscriber.ts
+    depends_on:
+      - mosquitto
+      - db
+      - api
+    environment:
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=olho_dagua_db
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+    volumes:
+      - .:/app
+
+volumes:
+  olho_dagua_db_data:
