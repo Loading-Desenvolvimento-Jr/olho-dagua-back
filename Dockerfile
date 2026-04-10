@@ -9,11 +9,12 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+
 COPY assets ./dist/assets
 
-RUN npx tsc --project tsconfig.json
-
 RUN npx prisma generate
+
+RUN npx tsc --project tsconfig.json
 
 EXPOSE 3000
 
