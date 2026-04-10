@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client" 
+  output   = "generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FilterStatus {
+  EXCELLENT
+  ATTENTION
+  GOOD
+  TO_REPLACE
+}
+
+model WaterFountain {
+  id                String             @id @default(uuid())
+  name              String
+  location          String
+  temperature       Float
+  filterStatus      FilterStatus       @default(GOOD)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  filterChanges     FilterChange[]
+  waterConsumptions WaterConsumption[]
+  waterTemperatures WaterTemperature[]
+}
+
+model WaterConsumption {
+  id              String        @id @default(uuid())
+  volume          Float
+  waterFountainId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  waterFountain   WaterFountain @relation(fields: [waterFountainId], references: [id])
+}
+
+model WaterTemperature {
+  id              String        @id @default(uuid())
+  temperature     Float
+  waterFountainId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  waterFountain   WaterFountain @relation(fields: [waterFountainId], references: [id])
+}
+
+model FilterChange {
+  id              String        @id @default(uuid())
+  waterFountainId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  waterFountain   WaterFountain @relation(fields: [waterFountainId], references: [id])
+}
