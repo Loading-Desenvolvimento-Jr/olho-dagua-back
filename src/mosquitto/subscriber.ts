@@ -1,26 +1,29 @@
-import z from "zod";
+import z    from "zod";
 import mqtt from "mqtt";
-import { env } from "../shared/env";
-import { dataPayloadSchema, statusPayloadSchema } from "./mqtt-types";
-import { handleConsumption, handleStatus, handleTemperature } from "./handlers";
 
-const MQTT_PREFIX = env.MQTT_TOPIC_PREFIX;
-const MQTT_SUBSCRIBER_TOPICS = {
-  METRICS: `${MQTT_PREFIX}${env.MQTT_SUBSCRIBER_METRICS}`,
-  STATUS:  `${MQTT_PREFIX}${env.MQTT_SUBSCRIBER_STATUS}`,
-};
+import { env }               from "../shared/env";
+import { dataPayloadSchema } from "./mqtt-types";
+
+import {handleConsumption} from "./handlers";
+import {handleTemperature} from "./handlers";
+
+const {
+  MQTT_TOPIC_PREFIX,
+  MQTT_TEMPERATURE_TOPIC,
+  MQTT_CONSUME_TOPIC,
+} = env;
 
 const client = mqtt.connect(env.MQTT_BROKER_URL, {
   username: env.MQTT_USER,
-  password: env.MQTT_PASSWORD
+  password: env.MQTT_PASSWORD,
 });
 
 client.on("connect", () => {
 
-  console.log("Stable MQTT connection");
+  console.log("Stable MQTT connection!!!");
 
-  client.subscribe(MQTT_SUBSCRIBER_TOPICS.METRICS);
-  client.subscribe(MQTT_SUBSCRIBER_TOPICS.STATUS);
+  client.subscribe(MQTT_TEMPERATURE_TOPIC);
+  client.subscribe(MQTT_CONSUME_TOPIC);
 
 });
 
@@ -30,55 +33,54 @@ client.on("message", async (topic, messageBuffer) => {
 
   console.log(`${topic}: ${message}`);
 
-  if (!topic.startsWith(MQTT_PREFIX)) {
+  if (!topic.startsWith(`${MQTT_TOPIC_PREFIX}/`)) {
     console.warn(`Ignored message from unexpected topic: ${topic}`);
     return;
   }
 
-  const subTopic = topic.replace(`${MQTT_PREFIX}/`, "");
-  const topicParts = subTopic.split("/");
-
-  const [waterFountainId, category, metric] = topicParts;
+  const subTopic = topic.replace(`${MQTT_TOPIC_PREFIX}/`, "");
+  const [waterFountainId, metric] = subTopic.split("/");
 
   try {
-
     const jsonPayload = JSON.parse(message);
 
-    if (category === "metrics") {
+    const payload = dataPayloadSchema.parse(jsonPayload);
 
-      const payload = dataPayloadSchema.parse(jsonPayload);
+    switch (metric) {
 
-      switch (metric) {
-        case "temperature":
-          await handleTemperature(waterFountainId, payload);
-          break;
-        case "consumption":
-          await handleConsumption(waterFountainId, payload);
-          break;
-        default:
-          throw new Error(`Unexpected metric data: ${metric} with payload ${message}`);
-      }
+      case "temperature":
+        await handleTemperature(waterFountainId, payload);
+        break;
 
-    } else if (category === "status") {
+      case "consume":
+        await handleConsumption(
+          client,
+          waterFountainId,
+          payload
+        );
+        break;
 
-      const payload = statusPayloadSchema.parse(jsonPayload);
-
-      await handleStatus(waterFountainId, payload);
+      default:
+        throw new Error(
+          `Unexpected metric: ${metric} with payload ${message}`
+        );
 
     }
-
   } catch (error) {
+
     if (error instanceof SyntaxError) {
       console.error(`Invalid JSON payload for topic ${topic}`);
       return;
     }
 
     if (error instanceof z.ZodError) {
-      console.error(`Invalid payload for topic ${topic}: ${z.flattenError(error)}`);
+      console.error(
+        `Invalid payload for topic ${topic}: ${z.flattenError(error)}`
+      );
       return;
     }
 
     console.error("Error processing MQTT message:", error);
-  }
 
+  }
 });
