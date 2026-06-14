@@ -14,12 +14,13 @@ const envSchema = z.object({
     
     DATABASE_URL: z.string(),
 
-    MQTT_BROKER_URL: z.string(),
-    MQTT_USER:       z.string(),
-    MQTT_PASSWORD:   z.string(),
-    MQTT_TOPIC_PREFIX: z.string(),
-    MQTT_SUBSCRIBER_METRICS: z.string(),
-    MQTT_SUBSCRIBER_STATUS: z.string(),
+    MQTT_BROKER_URL:        z.string(),
+    MQTT_USER:              z.string(),
+    MQTT_PASSWORD:          z.string(),
+    MQTT_TOPIC_PREFIX:      z.string(),
+    MQTT_TEMPERATURE_TOPIC: z.string(),
+    MQTT_CONSUME_TOPIC:     z.string(),
+    MQTT_FILTER_TOPIC:      z.string()
 
 });
 
