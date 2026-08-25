@@ -1,12 +1,16 @@
-import { dataPayloadType, statusPayloadType } from "./mqtt-types";
-import { TemperatureService }            from "../services/TemperatureService";
-import { TemperaturePrismaRepository }   from "../repositories/prisma/TemperaturePrismaRepository";
-import { WaterFountainPrismaRepository } from "../repositories/prisma/WaterFountainPrismaRepository";
-import { WaterFountainService }          from "../services/WaterFountainService";
-import { FilterChangeService } from "../services/FilterChangeService";
-import { FilterChangePrismaRepository } from "../repositories/prisma/FilterChangePrismaRepository";
-import { ConsumptionService } from "../services/ConsumptionService";
-import { ConsumptionPrismaRepository } from "../repositories/prisma/ConsumptionPrismaRepository";
+import { env }             from "../shared/env";
+import { MqttClient }      from "mqtt";
+import { DataPayloadType } from "./mqtt-types";
+
+import { TemperaturePrismaRepository }   from  "../repositories/prisma/TemperaturePrismaRepository";
+import { WaterFountainPrismaRepository } from  "../repositories/prisma/WaterFountainPrismaRepository";
+import { FilterChangePrismaRepository }  from  "../repositories/prisma/FilterChangePrismaRepository";
+import { ConsumptionPrismaRepository }   from  "../repositories/prisma/ConsumptionPrismaRepository";
+
+import { TemperatureService }   from  "../services/TemperatureService";
+import { WaterFountainService } from  "../services/WaterFountainService";
+import { FilterChangeService }  from  "../services/FilterChangeService";
+import { ConsumptionService }   from  "../services/ConsumptionService";
 
 const waterFountainService = new WaterFountainService(
   new WaterFountainPrismaRepository()
@@ -28,7 +32,10 @@ const consumptionService = new ConsumptionService(
   filterChangeService
 );
 
-export async function handleTemperature(waterFountainId: string, payload: dataPayloadType) {
+export async function handleTemperature(
+  waterFountainId: string, 
+  payload:         DataPayloadType
+) {
 
   console.log(`Temperature payload recive ${waterFountainId}`);
   console.log(payload);
@@ -45,7 +52,11 @@ export async function handleTemperature(waterFountainId: string, payload: dataPa
 
 }
 
-export async function handleConsumption(waterFountainId: string, payload: dataPayloadType) {
+export async function handleConsumption(
+  client:          MqttClient, 
+  waterFountainId: string, 
+  payload:         DataPayloadType
+) {
 
   console.log(`Water consume payload recive ${waterFountainId}`);
   console.log(payload);
@@ -56,15 +67,16 @@ export async function handleConsumption(waterFountainId: string, payload: dataPa
     
     await consumptionService.create(volume, waterFountainId);
 
+    const waterFountain = await waterFountainService.findById(waterFountainId);
+    
+    client.publish(
+      `${env.MQTT_TOPIC_PREFIX}/${waterFountainId}/filter`,
+      waterFountain.filterStatus,
+      { retain: true }
+    );
+
   } catch (error) {
     console.error(error);
   }
-
-}
-
-export async function handleStatus(waterFountainId: string, payload: statusPayloadType) {
-
-  console.log(`Status do bebedouro ${waterFountainId}`);
-  console.log(payload);
 
 }

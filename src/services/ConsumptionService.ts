@@ -1,6 +1,5 @@
 import { WaterConsumption }      from "../../prisma/generated/client";
 import { ConsumptionRepository } from "../repositories/interfaces/ConsumptionRepository";
-import { ResourceNotFound }      from "../shared/exception/wrappers/ResourceNotFound";
 import { FilterChangeService }   from "./FilterChangeService";
 import { WaterFountainService }  from "./WaterFountainService";
 
